@@ -19,7 +19,7 @@ const Checkout = () => {
           <Card className="shadow border-0 p-3 ">
             <CardHeader className="mb-3">
               <div style={{ fontWeight: "800", fontSize: "1rem" }}>
-                How many you have cars
+                How many cars do you have
               </div>
             </CardHeader>
             <InputGroup className="mb-3 d-flex justify-content-center">
