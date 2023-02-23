@@ -1,15 +1,26 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Button, Card, Container, InputGroup } from "react-bootstrap";
 import CardHeader from "react-bootstrap/esm/CardHeader";
 import { useDispatch, useSelector } from "react-redux";
 import { decrement, increment } from "../../Features/User";
+import CheckoutModel from "./CheckoutModel";
 
 const Checkout = () => {
   const dispatch = useDispatch();
   const counter = useSelector((state) => state.users.value);
   const prices = useSelector((state) => state.users.prices);
+  const [modelShow, setModelShow] = useState(false);
+  const [subcription, setSubcription] = useState('')
   return (
     <Fragment>
+      <CheckoutModel
+        show={modelShow}
+        onHide={() => setModelShow(false)}
+        cars={counter}
+        prices={prices}
+        subcription={subcription}
+      />
+
       <Container className="mt-5">
         <div className="d-flex align-items-center justify-content-center">
           <div style={{ fontWeight: "800", fontSize: "3rem" }}>Buy premium</div>
@@ -57,19 +68,26 @@ const Checkout = () => {
               >
                 ${prices}
               </div>
-              <div
-                className="d-flex align-items-center justify-content-center text-muted"
-              >
+              <div className="d-flex align-items-center justify-content-center text-muted">
                 per month
               </div>
             </div>
 
             <Card.Footer className="pt-3">
               <InputGroup className="d-flex align-items-center justify-content-center">
-                <Button variant="outline-primary" id="button-addon3" disabled={counter !== 0 ? false : true}>
+                <Button
+                  variant="outline-primary"
+                  onClick={() => (setModelShow(true), setSubcription('monthly'))}
+                  id="button-addon3"
+                  disabled={counter !== 0 ? false : true}
+                >
                   Monthly
                 </Button>
-                <Button variant="outline-success" id="button-addon4" disabled={counter !== 0 ? false : true}>
+                <Button
+                  variant="outline-success"
+                  id="button-addon4"
+                  disabled={counter !== 0 ? false : true}
+                >
                   Annual
                 </Button>
               </InputGroup>
