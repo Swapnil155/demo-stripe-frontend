@@ -11,9 +11,9 @@ export const userSlice = createSlice({
         increment: (state, action) => {
             // write code for increment
             state.value += 1
-            state.prices = state.priceArr[state.value - 1]
+            state.prices = state.priceArr[state.value - 1] * state.value
             if (state.priceArr.length < state.value) {
-                state.prices = 1.5
+                state.prices = 1.5 * state.value
             }
 
         },
@@ -25,9 +25,9 @@ export const userSlice = createSlice({
                 state.value = 0
                 state.prices = 0
             }
-            state.prices = state.priceArr[state.value - 1]
+            state.prices = state.priceArr[state.value - 1] * state.value
             if (state.priceArr.length < state.value) {
-                state.prices = 1.5
+                state.prices = 1.5 * state.value
             }
         }
     }
