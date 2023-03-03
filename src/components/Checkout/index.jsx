@@ -17,7 +17,7 @@ const Checkout = () => {
         show={modelShow}
         onHide={() => setModelShow(false)}
         cars={counter}
-        prices={prices}
+        prices={subcription === 'monthly'? prices : prices*10 }
         subcription={subcription}
       />
 
@@ -86,6 +86,7 @@ const Checkout = () => {
                 <Button
                   variant="outline-success"
                   id="button-addon4"
+                  onClick={() => (setModelShow(true), setSubcription('yearly'))}
                   disabled={counter !== 0 ? false : true}
                 >
                   Annual

@@ -1,37 +1,51 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export const userSlice = createSlice({
-    name: 'users',
-    initialState: {
-        value: 0,
-        prices: 0,
-        priceArr: [4.95, 4.50, 4.00, 3.50, 3.00, 2.50, 2.00, 1.50]
-    },
-    reducers: {
-        increment: (state, action) => {
-            // write code for increment
-            state.value += 1
-            state.prices = state.priceArr[state.value - 1] * state.value
-            if (state.priceArr.length < state.value) {
-                state.prices = 1.5 * state.value
-            }
-
-        },
-        decrement: (state, action) => {
-            // write code for decrement
-
-            state.value -= 1
-            if (state.value === -1) {
-                state.value = 0
-                state.prices = 0
-            }
-            state.prices = state.priceArr[state.value - 1] * state.value
-            if (state.priceArr.length < state.value) {
-                state.prices = 1.5 * state.value
-            }
-        }
+const calculatePrices = (n) => {
+  const price = 4.95;
+  const dedect = 0.5;
+  let result = 4.95;
+  if (n !== 0) {
+    for (var i = 2; i <= n; i++) {
+      let dedected_amount = dedect;
+      for (var j = 3; j <= i; j++) {
+        dedected_amount += 0.5;
+      }
+      if (i >= 8) {
+        result += 1.5;
+      } else {
+        result += price - dedected_amount;
+      }
     }
-})
+    return result;
+  } else {
+    return 0;
+  }
+};
 
-export const { increment, decrement } = userSlice.actions
-export default userSlice.reducer
+export const userSlice = createSlice({
+  name: "users",
+  initialState: {
+    value: 0,
+    prices: 0,
+  },
+  reducers: {
+    increment: (state, action) => {
+      // write code for increment
+      state.value += 1;
+      const amount = calculatePrices(state.value);
+      state.prices = amount.toFixed(2);
+    },
+    decrement: (state, action) => {
+      // write code for decrement
+      state.value -= 1;
+      if (state.value === -1) {
+        state.value = 0;
+      }
+      const amount = calculatePrices(state.value);
+      state.prices = amount.toFixed(2);
+    },
+  },
+});
+
+export const { increment, decrement } = userSlice.actions;
+export default userSlice.reducer;
