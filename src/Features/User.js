@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import UserServices from "../services/userServices";
 
 const calculatePrices = (n) => {
   const price = 4.95;
@@ -22,11 +23,30 @@ const calculatePrices = (n) => {
   }
 };
 
+export const  getlogin = createAsyncThunk("user/getlogin", async ({value}) => {
+  try {
+    console.log(value)
+    // await UserServices.userLogin(email, password).then((res) => {
+    //   console.log(res)
+    //   if (res.status === 200) {
+    //     return res
+    //   }
+    //   return res
+    // })
+  } catch (error) {
+    console.log(error)
+  }
+})
+
 export const userSlice = createSlice({
   name: "users",
   initialState: {
     value: 0,
     prices: 0,
+    loading: false,
+    error : null,
+    user : null,
+
   },
   reducers: {
     increment: (state, action) => {
@@ -45,6 +65,20 @@ export const userSlice = createSlice({
       state.prices = amount.toFixed(2);
     },
   },
+  extraReducers : {
+    [getlogin.pending] : (state, action) =>{
+      state.loading = true
+    },
+    [getlogin.fulfilled] : (state, action) => {
+      state.loading = false
+      console.log( action.payload)
+      state.user = action.payload
+    },
+    [getlogin.rejected] : (state, action) => {
+      state.loading = false
+      state.error = action.payload
+    }
+  }
 });
 
 
