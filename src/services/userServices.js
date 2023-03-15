@@ -1,13 +1,17 @@
 import api from "./api";
+import TokenService from "./tokenService";
 
 const userLogin = async (email, password) => {
-//   console.log(email, password);
+  //   console.log(email, password);
   try {
     const login = await api.post(`/api/user/login`, {
       email,
       password,
     });
     console.log(login);
+    if (login.data.accessToken) {
+      TokenService.setUser(login.data);
+    }
     return login;
   } catch (error) {
     console.log(error.response);
