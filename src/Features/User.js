@@ -22,21 +22,38 @@ const calculatePrices = (n) => {
     return 0;
   }
 };
-
-export const  getlogin = createAsyncThunk("user/getlogin", async ({value}) => {
-  try {
-    console.log(value)
-    // await UserServices.userLogin(email, password).then((res) => {
-    //   console.log(res)
-    //   if (res.status === 200) {
-    //     return res
-    //   }
-    //   return res
-    // })
-  } catch (error) {
-    console.log(error)
+export const getlogin = createAsyncThunk(
+  "user/getlogin",
+  async ({ email, password }, { rejectWithValue }) => {
+    const userdata = await UserServices.userLogin(email, password).then(
+      (res) => {
+        if (res.status === 200) {
+          return res.data;
+        }
+        return rejectWithValue(res.data.Error[0]);
+      }
+    );
+    return userdata;
   }
-})
+);
+
+export const getRegister = createAsyncThunk(
+  "user/getRegister",
+  async ({ name, mobileNumber, email, password }, { rejectWithValue }) => {
+    const userdata = await UserServices.userRegister(
+      name,
+      mobileNumber,
+      email,
+      password
+    ).then((res) => {
+      if (res.status === 200) {
+        return res.data;
+      }
+      return rejectWithValue(res.data.Error[0]);
+    });
+    return userdata;
+  }
+);
 
 export const userSlice = createSlice({
   name: "users",
@@ -44,9 +61,10 @@ export const userSlice = createSlice({
     value: 0,
     prices: 0,
     loading: false,
-    error : null,
-    user : null,
-
+    serverFailed: null,
+    serverSuccess: null,
+    userData: null,
+    userRegiter: null,
   },
   reducers: {
     increment: (state, action) => {
@@ -64,24 +82,43 @@ export const userSlice = createSlice({
       const amount = calculatePrices(state.value);
       state.prices = amount.toFixed(2);
     },
+    resetError: (state, action) => {
+      state.serverFailed = null;
+    },
+    resetSuccess: (state, action) => {
+      state.serverSuccess = null;
+    },
   },
-  extraReducers : {
-    [getlogin.pending] : (state, action) =>{
-      state.loading = true
+  extraReducers: {
+    [getlogin.pending]: (state, action) => {
+      state.loading = true;
     },
-    [getlogin.fulfilled] : (state, action) => {
-      state.loading = false
-      console.log( action.payload)
-      state.user = action.payload
+    [getlogin.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.userData = action.payload;
+      state.serverSuccess = action.payload.message;
     },
-    [getlogin.rejected] : (state, action) => {
-      state.loading = false
-      state.error = action.payload
-    }
-  }
+    [getlogin.rejected]: (state, action) => {
+      state.loading = false;
+      state.serverFailed = action.payload;
+    },
+    // User Regiter
+    [getRegister.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getRegister.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.userRegiter = action.payload;
+      state.userData = action.payload;
+      state.serverSuccess = action.payload.message;
+    },
+    [getRegister.rejected]: (state, action) => {
+      state.loading = false;
+      state.serverFailed = action.payload;
+    },
+  },
 });
 
-
-export const { increment, decrement } = userSlice.actions;
-export default userSlice.reducer ;
-
+export const { increment, decrement, resetError, resetSuccess } =
+  userSlice.actions;
+export default userSlice.reducer;
