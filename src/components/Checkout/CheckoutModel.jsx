@@ -21,7 +21,9 @@ import {
   Row,
   Spinner,
 } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
 import paymentServices from "../../services/paymentServices";
+import { userAuthenticate } from "../../Features/User";
 
 const CARD_ELEMENT_OPTIONS = {
   style: {
@@ -53,6 +55,7 @@ const MakePayment = (props) => {
   const elements = useElements();
   const [loader, setLoader] = useState(false);
   const [product, setProduct] = useState(initialState);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setProduct({
@@ -105,9 +108,10 @@ const MakePayment = (props) => {
             const confirmPayment = await stripe.confirmCardPayment(
               client_secret
             );
-            console.log(confirmPayment)
-
-            
+            console.log(confirmPayment);
+          }
+          if (res.status === 403 || res.status === 401) {
+            dispatch(userAuthenticate());
           }
           setLoader(false);
         })

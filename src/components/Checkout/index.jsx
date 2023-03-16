@@ -1,8 +1,10 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Button, Card, Container, InputGroup } from "react-bootstrap";
 import CardHeader from "react-bootstrap/esm/CardHeader";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { decrement, increment } from "../../Features/User";
+import TokenService from "../../services/tokenService";
 import CheckoutModel from "./CheckoutModel";
 
 const Checkout = () => {
@@ -10,14 +12,25 @@ const Checkout = () => {
   const counter = useSelector((state) => state.users.value);
   const prices = useSelector((state) => state.users.prices);
   const [modelShow, setModelShow] = useState(false);
-  const [subcription, setSubcription] = useState('')
+  const [subcription, setSubcription] = useState("");
+  const navigate = useNavigate();
+  const { isAuthenticated } = useSelector((state) => state.users);
+
+  useEffect(() => {
+    const user = TokenService.getUser();
+    console.log(isAuthenticated);
+    if (!user || !isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, navigate]);
+
   return (
     <Fragment>
       <CheckoutModel
         show={modelShow}
         onHide={() => setModelShow(false)}
         cars={counter}
-        prices={subcription === 'monthly'? prices : prices*10 }
+        prices={subcription === "monthly" ? prices : prices * 10}
         subcription={subcription}
       />
 
@@ -77,7 +90,9 @@ const Checkout = () => {
               <InputGroup className="d-flex align-items-center justify-content-center">
                 <Button
                   variant="outline-primary"
-                  onClick={() => (setModelShow(true), setSubcription('monthly'))}
+                  onClick={() => (
+                    setModelShow(true), setSubcription("monthly")
+                  )}
                   id="button-addon3"
                   disabled={counter !== 0 ? false : true}
                 >
@@ -86,7 +101,7 @@ const Checkout = () => {
                 <Button
                   variant="outline-success"
                   id="button-addon4"
-                  onClick={() => (setModelShow(true), setSubcription('yearly'))}
+                  onClick={() => (setModelShow(true), setSubcription("yearly"))}
                   disabled={counter !== 0 ? false : true}
                 >
                   Annual

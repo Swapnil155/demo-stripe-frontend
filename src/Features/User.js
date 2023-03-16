@@ -65,6 +65,7 @@ export const userSlice = createSlice({
     serverSuccess: null,
     userData: null,
     userRegiter: null,
+    isAuthenticated: false,
   },
   reducers: {
     increment: (state, action) => {
@@ -88,6 +89,9 @@ export const userSlice = createSlice({
     resetSuccess: (state, action) => {
       state.serverSuccess = null;
     },
+    userAuthenticate: (state, action) => {
+      state.isAuthenticated = !state.isAuthenticated;
+    },
   },
   extraReducers: {
     [getlogin.pending]: (state, action) => {
@@ -97,6 +101,7 @@ export const userSlice = createSlice({
       state.loading = false;
       state.userData = action.payload;
       state.serverSuccess = action.payload.message;
+      state.isAuthenticated = true;
     },
     [getlogin.rejected]: (state, action) => {
       state.loading = false;
@@ -119,6 +124,11 @@ export const userSlice = createSlice({
   },
 });
 
-export const { increment, decrement, resetError, resetSuccess } =
-  userSlice.actions;
+export const {
+  increment,
+  decrement,
+  resetError,
+  resetSuccess,
+  userAuthenticate,
+} = userSlice.actions;
 export default userSlice.reducer;

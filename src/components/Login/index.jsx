@@ -12,7 +12,12 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { getlogin, resetError, resetSuccess } from "../../Features/User";
+import {
+  getlogin,
+  resetError,
+  resetSuccess,
+  userAuthenticate,
+} from "../../Features/User";
 import { Link, useNavigate } from "react-router-dom";
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email().required("Email is required"),
@@ -35,8 +40,9 @@ const Login = () => {
       setServerError(serverSuccess);
       setTimeout(() => {
         dispatch(resetSuccess());
+        // dispatch(userAuthenticate());
         navigate("/");
-      }, 4000);
+      }, 1000);
     }
     if (serverFailed != null) {
       console.log(serverFailed);

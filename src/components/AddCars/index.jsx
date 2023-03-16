@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { AddCars } from "../../Features/addCars";
+import { AddCars, createMember } from "../../Features/addCars";
 
 const addSchema = yup
   .object({
@@ -39,8 +39,9 @@ const AddCar = () => {
 
   const onSubmit = (data) => {
     alert(JSON.stringify(data));
-    dispatch(AddCars(data));
-    reset()
+    // dispatch(AddCars(data));
+    dispatch(createMember(data));
+    reset();
   };
   return (
     <Fragment>
@@ -119,7 +120,7 @@ const AddCar = () => {
               {counte > 0 &&
                 cars.map((car, index) => (
                   <tr key={car.id}>
-                    <td>{index += 1}</td>
+                    <td>{(index += 1)}</td>
                     <td>{car.car.ownername}</td>
                     <td>{car.car.DOB}</td>
                     <td>{car.car.gender}</td>
