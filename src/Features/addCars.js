@@ -56,7 +56,8 @@ export const addCarsSlice = createSlice({
       state.loader = true;
     },
     [createMember.fulfilled]: (state, action) => {
-      state.list.push(action.payload);
+      state.count += 1;
+      state.list.push(action.payload.data);
       state.serverSuccess = action.payload.message;
       state.loader = false;
     },

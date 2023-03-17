@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -7,12 +7,16 @@ import {
   Form,
   Stack,
   Table,
+  Toast,
+  ToastContainer,
 } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { AddCars, createMember } from "../../Features/addCars";
+import { useNavigate } from "react-router-dom";
+import { resetError, resetSuccess } from "../../Features/addCars";
 
 const addSchema = yup
   .object({
@@ -24,6 +28,36 @@ const addSchema = yup
   .required();
 
 const AddCar = () => {
+  const { list, count, serverSuccess, serverFailed } = useSelector(
+    (state) => state.cars
+  );
+  // console.log(list);
+  const [show, setShow] = useState(false);
+  const [toastBg, setToastBg] = useState("");
+  const [serverError, setServerError] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (list && serverSuccess) {
+      setShow(true);
+      setToastBg(`bg-success`);
+      setServerError(serverSuccess);
+      setTimeout(() => {
+        dispatch(resetSuccess());
+      }, 1000);
+    }
+    if (serverFailed != null) {
+      console.log(serverFailed);
+      setShow(true);
+      setToastBg(`bg-danger`);
+      setServerError(serverFailed.message);
+      setTimeout(() => {
+        dispatch(resetError());
+      }, 4000);
+    }
+  }, [navigate, dispatch, serverFailed, serverSuccess, list]);
+
   const {
     register,
     handleSubmit,
@@ -33,10 +67,6 @@ const AddCar = () => {
     resolver: yupResolver(addSchema),
   });
 
-  const dispatch = useDispatch();
-  const cars = useSelector((state) => state.cars.list);
-  const counte = useSelector((state) => state.cars.count);
-
   const onSubmit = (data) => {
     alert(JSON.stringify(data));
     // dispatch(AddCars(data));
@@ -45,6 +75,22 @@ const AddCar = () => {
   };
   return (
     <Fragment>
+      <ToastContainer className="pb-5" position="bottom-center">
+        <Toast
+          className={toastBg}
+          onClose={() => setShow(false)}
+          show={show}
+          delay={4000}
+          autohide
+        >
+          <div
+            className="py-3 text-white text-center"
+            style={{ fontSize: "1rem" }}
+          >
+            {serverError}
+          </div>
+        </Toast>
+      </ToastContainer>
       <Container className="mt-5">
         <Card className="shadow border-0 p-4 mb-5">
           <Form className="row g-2" onSubmit={handleSubmit(onSubmit)}>
@@ -113,18 +159,20 @@ const AddCar = () => {
                 <th>Age</th>
                 <th>Gender</th>
                 <th>VRN</th>
+                <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {counte > 0 &&
-                cars.map((car, index) => (
-                  <tr key={car.id}>
+              {count > 0 &&
+                list.map((car, index) => (
+                  <tr key={car._id}>
                     <td>{(index += 1)}</td>
-                    <td>{car.car.ownername}</td>
-                    <td>{car.car.DOB}</td>
-                    <td>{car.car.gender}</td>
-                    <td>LD67LYO</td>
+                    <td>{car.ownerName}</td>
+                    <td>{car.age}</td>
+                    <td>{car.gender}</td>
+                    <td>{car.registration}</td>
+                    <td>{`active`}</td>
                     <td>
                       <Stack direction="horizontal" gap={2}>
                         <Button variant="secondary">Edit</Button>

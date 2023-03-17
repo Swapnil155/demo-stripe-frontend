@@ -11,7 +11,7 @@ const addMember = async (_id, ownerName, age, gender, registration) => {
     })
     .then((res) => {
       console.log(res.data);
-      return res.data;
+      return res;
     })
     .catch((err) => {
       console.log(err.response);
