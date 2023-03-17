@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AddCars, createMember } from "../../Features/addCars";
 import { useNavigate } from "react-router-dom";
 import { resetError, resetSuccess } from "../../Features/addCars";
+import TokenService from "../../services/tokenService";
 
 const addSchema = yup
   .object({
@@ -31,7 +32,8 @@ const AddCar = () => {
   const { list, count, serverSuccess, serverFailed } = useSelector(
     (state) => state.cars
   );
-  // console.log(list);
+  const { isAuthenticated, value } = useSelector((state) => state.users);
+  console.log([...list].reverse());
   const [show, setShow] = useState(false);
   const [toastBg, setToastBg] = useState("");
   const [serverError, setServerError] = useState("");
@@ -39,6 +41,10 @@ const AddCar = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    const user = TokenService.getUser();
+    // if (!user || !isAuthenticated) {
+    //   navigate("/login");
+    // }
     if (list && serverSuccess) {
       setShow(true);
       setToastBg(`bg-success`);
@@ -56,7 +62,7 @@ const AddCar = () => {
         dispatch(resetError());
       }, 4000);
     }
-  }, [navigate, dispatch, serverFailed, serverSuccess, list]);
+  }, [navigate, dispatch, serverFailed, serverSuccess, list, isAuthenticated]);
 
   const {
     register,
@@ -165,14 +171,24 @@ const AddCar = () => {
             </thead>
             <tbody>
               {count > 0 &&
-                list.map((car, index) => (
+                [...list].reverse().map((car, index) => (
                   <tr key={car._id}>
                     <td>{(index += 1)}</td>
                     <td>{car.ownerName}</td>
                     <td>{car.age}</td>
                     <td>{car.gender}</td>
                     <td>{car.registration}</td>
-                    <td>{`active`}</td>
+                    <td>
+                      {value && value < index ? (
+                        <span className="badge rounded-pill text-bg-primary">
+                          select
+                        </span>
+                      ) : (
+                        <span className="badge rounded-pill text-bg-success">
+                          active
+                        </span>
+                      )}
+                    </td>
                     <td>
                       <Stack direction="horizontal" gap={2}>
                         <Button variant="secondary">Edit</Button>

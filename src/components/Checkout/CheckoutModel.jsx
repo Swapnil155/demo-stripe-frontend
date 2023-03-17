@@ -24,6 +24,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import paymentServices from "../../services/paymentServices";
 import { userAuthenticate } from "../../Features/User";
+import { useNavigate } from "react-router-dom";
 
 const CARD_ELEMENT_OPTIONS = {
   style: {
@@ -53,6 +54,7 @@ const initialState = {
 const MakePayment = (props) => {
   const stripe = useStripe();
   const elements = useElements();
+  const navigate = useNavigate()
   const [loader, setLoader] = useState(false);
   const [product, setProduct] = useState(initialState);
   const dispatch = useDispatch();
@@ -107,7 +109,9 @@ const MakePayment = (props) => {
             const client_secret = res.data.client_secret;
             const confirmPayment = await stripe.confirmCardPayment(
               client_secret
-            );
+            ).then((response) => {
+              navigate('/addCars')
+            });
             console.log(confirmPayment);
           }
           if (res.status === 403 || res.status === 401) {
