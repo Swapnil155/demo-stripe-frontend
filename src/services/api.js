@@ -69,6 +69,7 @@ instance.interceptors.response.use(
     return res;
   },
   async (err) => {
+    // const dispatch = useDispatch();
     const originalConfig = err.config;
     // console.log(!originalConfig.__isRetryRequest)
 
@@ -100,6 +101,8 @@ instance.interceptors.response.use(
         } catch (_error) {
           // console.log(_error.response)
           if (_error.response.status === 401) {
+            // dispatch(userAuthenticate);
+            TokenService.isAuthenticateFailed()
             return _error.response;
           }
           return Promise.reject(_error);

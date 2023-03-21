@@ -1,10 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { useDispatch } from "react-redux";
 import MemberServices from "../services/memberServices";
 import TokenService from "../services/tokenService";
+import { userAuthenticate } from "./User";
 
 export const createMember = createAsyncThunk(
   "member/createMember",
   async ({ DOB, VRN, gender, ownername }, { rejectWithValue }) => {
+    // const dispatch = useDispatch()
     const user = TokenService.getUser();
     console.log(user && user.user._id);
     const _id = user && user.user._id;
@@ -18,7 +21,9 @@ export const createMember = createAsyncThunk(
       if (res.status === 200) {
         return res.data;
       }
-      return rejectWithValue(res.data.Error[0]);
+      // dispatch(userAuthenticate)
+      console.log(res.data);
+      return rejectWithValue(res.data);
     });
     return memberData;
   }
@@ -29,6 +34,7 @@ export const addCarsSlice = createSlice({
   initialState: {
     count: 0,
     list: [],
+    VRNList: [],
     loader: false,
     serverFailed: null,
     serverSuccess: null,
@@ -58,12 +64,19 @@ export const addCarsSlice = createSlice({
     [createMember.fulfilled]: (state, action) => {
       state.count += 1;
       state.list.push(action.payload.data);
+      // console.log(action.payload.data && action.payload.data.registration)
+      state.VRNList.push(
+        action.payload.data && action.payload.data.registration
+      );
       state.serverSuccess = action.payload.message;
       state.loader = false;
     },
     [createMember.rejected]: (state, action) => {
       state.loader = false;
-      state.serverFailed = action.payload;
+      state.serverFailed = action.payload.Error[0];
+      if (action.payload.data) {
+        console.log(action.payload.data);
+      }
     },
   },
 });

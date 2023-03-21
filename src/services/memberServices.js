@@ -1,6 +1,8 @@
+import { useDispatch } from "react-redux";
 import api from "./api";
 
 const addMember = async (_id, ownerName, age, gender, registration) => {
+  
   // console.log(_id, ownerName, age, gender, registration);
   return api
     .patch(`/api/user/member/${_id}`, {
@@ -10,7 +12,8 @@ const addMember = async (_id, ownerName, age, gender, registration) => {
       registration,
     })
     .then((res) => {
-      console.log(res.data);
+      // const dispatch = useDispatch()
+      console.log(res.status);
       return res;
     })
     .catch((err) => {

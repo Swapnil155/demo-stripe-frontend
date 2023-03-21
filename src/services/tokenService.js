@@ -24,13 +24,27 @@ const getUser = () => {
   return JSON.parse(localStorage.getItem("user"));
 };
 
-const setUser = (user) => {
-  //   console.log(JSON.stringify(user));
-  localStorage.setItem("user", JSON.stringify(user));
+const setUser = (userdata) => {
+  const { user, refreshToken, message, accessToken } = userdata;
+  const data = {
+    user: user,
+    refreshToken,
+    message,
+    accessToken,
+    isAuthenticate: true,
+  };
+  console.log(data);
+  localStorage.setItem("user", JSON.stringify(data));
 };
 
 const removeUser = () => {
   localStorage.removeItem("user");
+};
+
+const isAuthenticateFailed = () => {
+  let user = JSON.parse(localStorage.getItem("user"));
+  user.isAuthenticate = false;
+  localStorage.setItem("user", JSON.stringify(user));
 };
 
 const TokenService = {
@@ -41,6 +55,7 @@ const TokenService = {
   getUser,
   setUser,
   removeUser,
+  isAuthenticateFailed,
 };
 
 export default TokenService;

@@ -14,15 +14,15 @@ const Checkout = () => {
   const [modelShow, setModelShow] = useState(false);
   const [subcription, setSubcription] = useState("");
   const navigate = useNavigate();
-  const { isAuthenticated } = useSelector((state) => state.users);
+  // const { isAuthenticated } = useSelector((state) => state.users);
 
+  const user = TokenService.getUser();
+  // console.log(!user.isAuthenticated);
   useEffect(() => {
-    const user = TokenService.getUser();
-    console.log(isAuthenticated);
-    if (!user || !isAuthenticated) {
+    if (!user.isAuthenticate) {
       navigate("/login");
     }
-  }, [isAuthenticated, navigate]);
+  }, [navigate, user.isAuthenticate]);
 
   return (
     <Fragment>

@@ -5,6 +5,7 @@ import {
   Col,
   Container,
   Form,
+  Spinner,
   Stack,
   Table,
   Toast,
@@ -19,32 +20,39 @@ import { useNavigate } from "react-router-dom";
 import { resetError, resetSuccess } from "../../Features/addCars";
 import TokenService from "../../services/tokenService";
 
-const addSchema = yup
-  .object({
-    ownername: yup.string().required(),
-    DOB: yup.string().required(),
-    gender: yup.string().required(),
-    VRN: yup.string().required(),
-  })
-  .required();
-
 const AddCar = () => {
-  const { list, count, serverSuccess, serverFailed } = useSelector(
-    (state) => state.cars
-  );
+  const { list, count, serverSuccess, serverFailed, loader, VRNList } =
+    useSelector((state) => state.cars);
   const { isAuthenticated, value } = useSelector((state) => state.users);
-  console.log([...list].reverse());
+  // console.log([...list].reverse());
   const [show, setShow] = useState(false);
   const [toastBg, setToastBg] = useState("");
   const [serverError, setServerError] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // console.log(VRNList);
+
+  const addSchema = yup
+    .object({
+      ownername: yup.string().required(),
+      DOB: yup.string().required(),
+      gender: yup.string().required(),
+      VRN: yup
+        .string()
+        .required()
+        .test("VRN-check", "These vehicle already added", function (value) {
+          return !VRNList.includes(value);
+        }),
+    })
+    .required();
+
+  const user = TokenService.getUser();
+  // console.log(!user.isAuthenticated);
   useEffect(() => {
-    const user = TokenService.getUser();
-    // if (!user || !isAuthenticated) {
-    //   navigate("/login");
-    // }
+    if (!user.isAuthenticate) {
+      navigate("/login");
+    }
     if (list && serverSuccess) {
       setShow(true);
       setToastBg(`bg-success`);
@@ -62,7 +70,7 @@ const AddCar = () => {
         dispatch(resetError());
       }, 4000);
     }
-  }, [navigate, dispatch, serverFailed, serverSuccess, list, isAuthenticated]);
+  }, [navigate, dispatch, serverFailed, serverSuccess, list, user]);
 
   const {
     register,
@@ -71,10 +79,11 @@ const AddCar = () => {
     reset,
   } = useForm({
     resolver: yupResolver(addSchema),
+    mode: "onTouched",
   });
 
   const onSubmit = (data) => {
-    alert(JSON.stringify(data));
+    // alert(JSON.stringify(data));
     // dispatch(AddCars(data));
     dispatch(createMember(data));
     reset();
@@ -144,12 +153,25 @@ const AddCar = () => {
                   {...register("VRN")}
                   required
                 />
+                <Form.Text className="text-danger">
+                  {errors.VRN?.message}
+                </Form.Text>
               </Form.Group>
             </Col>
 
             <Col className="pt-1" sm="1">
-              <Button className="mt-4" type="submit">
-                {" "}
+              <Button className="mt-4" type="submit" disabled={loader}>
+                {loader ? (
+                  <Spinner
+                    as="span"
+                    animation="grow"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  ""
+                )}
                 Add Cars
               </Button>
             </Col>
@@ -169,15 +191,16 @@ const AddCar = () => {
                 <th>Action</th>
               </tr>
             </thead>
+            {}
             <tbody>
               {count > 0 &&
                 [...list].reverse().map((car, index) => (
-                  <tr key={car._id}>
+                  <tr key={index}>
                     <td>{(index += 1)}</td>
-                    <td>{car.ownerName}</td>
-                    <td>{car.age}</td>
-                    <td>{car.gender}</td>
-                    <td>{car.registration}</td>
+                    <td>{car && car.ownerName}</td>
+                    <td>{car && car.age}</td>
+                    <td>{car && car.gender}</td>
+                    <td>{car && car.registration}</td>
                     <td>
                       {value && value < index ? (
                         <span className="badge rounded-pill text-bg-primary">
