@@ -23,15 +23,13 @@ import TokenService from "../../services/tokenService";
 const AddCar = () => {
   const { list, count, serverSuccess, serverFailed, loader, VRNList } =
     useSelector((state) => state.cars);
-  const { isAuthenticated, value } = useSelector((state) => state.users);
+  const { value } = useSelector((state) => state.users);
   // console.log([...list].reverse());
   const [show, setShow] = useState(false);
   const [toastBg, setToastBg] = useState("");
   const [serverError, setServerError] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  // console.log(VRNList);
 
   const addSchema = yup
     .object({

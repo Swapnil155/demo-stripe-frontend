@@ -1,13 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { useDispatch } from "react-redux";
 import MemberServices from "../services/memberServices";
 import TokenService from "../services/tokenService";
-import { userAuthenticate } from "./User";
 
 export const createMember = createAsyncThunk(
   "member/createMember",
   async ({ DOB, VRN, gender, ownername }, { rejectWithValue }) => {
-    // const dispatch = useDispatch()
     const user = TokenService.getUser();
     console.log(user && user.user._id);
     const _id = user && user.user._id;
@@ -21,7 +18,6 @@ export const createMember = createAsyncThunk(
       if (res.status === 200) {
         return res.data;
       }
-      // dispatch(userAuthenticate)
       console.log(res.data);
       return rejectWithValue(res.data);
     });

@@ -1,11 +1,9 @@
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { userAuthenticate } from "../Features/User";
 import TokenService from "./tokenService";
 
 const instance = axios.create({
-  baseURL: "http://localhost:5000",
-  // baseURL: "https://backend-mo-t.vercel.app/",
+  // baseURL: "http://localhost:5000",
+  baseURL: "https://backend-mo-t.vercel.app/",
   headers: {
     "Content-Type": "application/json",
   },
@@ -102,7 +100,7 @@ instance.interceptors.response.use(
           // console.log(_error.response)
           if (_error.response.status === 401) {
             // dispatch(userAuthenticate);
-            TokenService.isAuthenticateFailed()
+            TokenService.isAuthenticateFailed();
             return _error.response;
           }
           return Promise.reject(_error);

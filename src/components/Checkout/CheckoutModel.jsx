@@ -7,7 +7,7 @@ import {
   useStripe,
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { type } from "@testing-library/user-event/dist/type";
+// import { type } from "@testing-library/user-event/dist/type";
 import { Fragment, useEffect, useState } from "react";
 import {
   Button,
@@ -54,7 +54,7 @@ const initialState = {
 const MakePayment = (props) => {
   const stripe = useStripe();
   const elements = useElements();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
   const [product, setProduct] = useState(initialState);
   const dispatch = useDispatch();
@@ -107,11 +107,12 @@ const MakePayment = (props) => {
           console.log(res);
           if (res.status === 200) {
             const client_secret = res.data.client_secret;
-            const confirmPayment = await stripe.confirmCardPayment(
-              client_secret
-            ).then((response) => {
-              navigate('/addCars')
-            });
+            const confirmPayment = await stripe
+              .confirmCardPayment(client_secret)
+              .then((response) => {
+                navigate("/addCars");
+                return response;
+              });
             console.log(confirmPayment);
           }
           if (res.status === 403 || res.status === 401) {
