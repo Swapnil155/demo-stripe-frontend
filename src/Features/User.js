@@ -22,6 +22,7 @@ const calculatePrices = (n) => {
     return 0;
   }
 };
+
 export const getlogin = createAsyncThunk(
   "user/getlogin",
   async ({ email, password }, { rejectWithValue }) => {

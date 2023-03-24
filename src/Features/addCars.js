@@ -15,12 +15,31 @@ export const createMember = createAsyncThunk(
       gender,
       VRN
     ).then((res) => {
+      console.log(res);
       if (res.status === 200) {
         return res.data;
       }
-      console.log(res.data);
       return rejectWithValue(res.data);
     });
+    return memberData;
+  }
+);
+
+export const removeMember = createAsyncThunk(
+  "member/removeMember",
+  async (VRN, { rejectWithValue }) => {
+    const user = TokenService.getUser();
+    console.log(user && user.user._id);
+    const _id = user && user.user._id;
+    const memberData = await MemberServices.removeMember(_id, VRN).then(
+      (res) => {
+        console.log(res);
+        if (res.status === 200) {
+          return res.data;
+        }
+        return rejectWithValue(res.data);
+      }
+    );
     return memberData;
   }
 );
@@ -45,7 +64,6 @@ export const addCarsSlice = createSlice({
       state.list.push(car);
       state.count += 1;
     },
-    removeCar: (state, action) => {},
     resetError: (state, action) => {
       state.serverFailed = null;
     },
@@ -60,9 +78,9 @@ export const addCarsSlice = createSlice({
     [createMember.fulfilled]: (state, action) => {
       state.count += 1;
       state.list.push(action.payload.data);
-      // console.log(action.payload.data && action.payload.data.registration)
+      // console.log(action.payload.data && action.payload.data)
       state.VRNList.push(
-        action.payload.data && action.payload.data.registration
+        action.payload.data && action.payload.data.registrationNumber
       );
       state.serverSuccess = action.payload.message;
       state.loader = false;
@@ -74,9 +92,39 @@ export const addCarsSlice = createSlice({
         console.log(action.payload.data);
       }
     },
+
+    [removeMember.pending]: (state, action) => {
+      state.loader = true;
+    },
+    [removeMember.fulfilled]: (state, action) => {
+      state.count -= 1;
+      const newList = state.list.filter(
+        (elem) => elem.registrationNumber !== action.payload.data.registration
+      );
+      state.list = newList;
+      const newVRNList = state.list.filter(
+        (elem) => elem !== action.payload.data.registration
+      );
+      console.log(action.payload.data && action.payload.data.registration);
+      state.VRNList = newVRNList;
+      // state.serverFailed = action.payload.message;
+      // state.list.push(action.payload.data);
+      // // console.log(action.payload.data && action.payload.data)
+      // state.VRNList.push(
+      //   action.payload.data && action.payload.data.registrationNumber
+      // );
+      state.serverSuccess = action.payload.message;
+      state.loader = false;
+    },
+    [removeMember.rejected]: (state, action) => {
+      state.loader = false;
+      state.serverFailed = action.payload.Error[0];
+      if (action.payload.data) {
+        console.log(action.payload.data);
+      }
+    },
   },
 });
 
-export const { AddCars, removeCar, resetError, resetSuccess } =
-  addCarsSlice.actions;
+export const { AddCars, resetError, resetSuccess } = addCarsSlice.actions;
 export default addCarsSlice.reducer;

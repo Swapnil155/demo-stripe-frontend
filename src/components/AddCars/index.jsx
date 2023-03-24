@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { AddCars, createMember } from "../../Features/addCars";
+import { AddCars, createMember, removeMember } from "../../Features/addCars";
 import { useNavigate } from "react-router-dom";
 import { resetError, resetSuccess } from "../../Features/addCars";
 import TokenService from "../../services/tokenService";
@@ -181,11 +181,11 @@ const AddCar = () => {
             <thead>
               <tr>
                 <th>#</th>
-                <th>Owner Name</th>
-                <th>Age</th>
-                <th>Gender</th>
                 <th>VRN</th>
-                <th>Status</th>
+                <th>Owner</th>
+                <th>mot Status</th>
+                <th>mot Expiry Date</th>
+                <th>subscription</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -195,13 +195,24 @@ const AddCar = () => {
                 [...list].reverse().map((car, index) => (
                   <tr key={index}>
                     <td>{(index += 1)}</td>
-                    <td>{car && car.ownerName}</td>
-                    <td>{car && car.age}</td>
-                    <td>{car && car.gender}</td>
-                    <td>{car && car.registration}</td>
+                    <td>{car && car.registrationNumber}</td>
+                    <td>{car && car.member_Details.ownerName}</td>
                     <td>
-                      {value && value < index ? (
-                        <span className="badge rounded-pill text-bg-primary">
+                      <span
+                        className={
+                          car && car.motStatus === "Valid"
+                            ? "badge rounded-pill text-bg-success"
+                            : "badge rounded-pill text-bg-danger"
+                        }
+                      >
+                        {car.motStatus}
+                      </span>
+                    </td>
+                    <td>{car && car.motExpiryDate}</td>
+
+                    <td>
+                      {value !== null && value < index ? (
+                        <span className="badge rounded-pill text-bg-secondary">
                           select
                         </span>
                       ) : (
@@ -214,7 +225,14 @@ const AddCar = () => {
                       <Stack direction="horizontal" gap={2}>
                         <Button variant="secondary">Edit</Button>
 
-                        <Button variant="danger">Delete</Button>
+                        <Button
+                          onClick={() =>
+                            dispatch(removeMember(car.registrationNumber))
+                          }
+                          variant="danger"
+                        >
+                          Delete
+                        </Button>
                       </Stack>
                     </td>
                   </tr>

@@ -1,14 +1,31 @@
 import { useDispatch } from "react-redux";
 import api from "./api";
 
-const addMember = async (_id, ownerName, age, gender, registration) => {
+const addMember = async (_id, ownerName, age, gender, registrationNumber) => {
   // console.log(_id, ownerName, age, gender, registration);
   return api
-    .patch(`/api/user/member/${_id}`, {
+    .patch(`/api/user/AddMember/${_id}`, {
       ownerName,
       age,
       gender,
-      registration,
+      registrationNumber,
+    })
+    .then((res) => {
+      // const dispatch = useDispatch()
+      console.log(res);
+      return res;
+    })
+    .catch((err) => {
+      console.log(err.response);
+      return err.response;
+    });
+};
+
+const removeMember = async (_id, registrationNumber) => {
+  // console.log(_id, ownerName, age, gender, registration);
+  return api
+    .patch(`/api/user/removeMember/${_id}`, {
+      registrationNumber,
     })
     .then((res) => {
       // const dispatch = useDispatch()
@@ -23,6 +40,7 @@ const addMember = async (_id, ownerName, age, gender, registration) => {
 
 const MemberServices = {
   addMember,
+  removeMember,
 };
 
 export default MemberServices;
