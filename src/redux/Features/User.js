@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import UserServices from "../services/userServices";
+import UserServices from "../../services/userServices";
 
 const calculatePrices = (n) => {
   const price = 4.95;
@@ -40,7 +40,10 @@ export const getlogin = createAsyncThunk(
 
 export const getRegister = createAsyncThunk(
   "user/getRegister",
-  async ({ name, mobileNumber, email, password }, { rejectWithValue }) => {
+  async (
+    { name, mobileNumber, email, password },
+    { rejectWithValue, dispatch }
+  ) => {
     const userdata = await UserServices.userRegister(
       name,
       mobileNumber,
@@ -100,7 +103,7 @@ export const userSlice = createSlice({
     },
     [getlogin.fulfilled]: (state, action) => {
       state.loading = false;
-      state.userData = action.payload;
+      state.userData = action.payload.user;
       state.serverSuccess = action.payload.message;
       state.isAuthenticated = true;
     },

@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import MemberServices from "../services/memberServices";
-import TokenService from "../services/tokenService";
+import MemberServices from "../../services/memberServices";
+import TokenService from "../../services/tokenService";
+import { userAuthenticate } from "./User";
 
 export const createMember = createAsyncThunk(
   "member/createMember",
-  async ({ DOB, VRN, gender, ownername }, { rejectWithValue }) => {
+  async ({ DOB, VRN, gender, ownername }, { rejectWithValue, dispatch }) => {
     const user = TokenService.getUser();
     console.log(user && user.user._id);
     const _id = user && user.user._id;
@@ -17,8 +18,17 @@ export const createMember = createAsyncThunk(
     ).then((res) => {
       console.log(res);
       if (res.status === 200) {
+        setTimeout(() => {
+          dispatch(resetSuccess());
+        }, 1000);
         return res.data;
       }
+      if (res.status === 401) {
+        dispatch(userAuthenticate());
+      }
+      setTimeout(() => {
+        dispatch(resetError());
+      }, 1000);
       return rejectWithValue(res.data);
     });
     return memberData;
@@ -27,7 +37,7 @@ export const createMember = createAsyncThunk(
 
 export const removeMember = createAsyncThunk(
   "member/removeMember",
-  async (VRN, { rejectWithValue }) => {
+  async (VRN, { rejectWithValue, dispatch }) => {
     const user = TokenService.getUser();
     console.log(user && user.user._id);
     const _id = user && user.user._id;
@@ -35,8 +45,17 @@ export const removeMember = createAsyncThunk(
       (res) => {
         console.log(res);
         if (res.status === 200) {
+          setTimeout(() => {
+            dispatch(resetSuccess());
+          }, 1000);
           return res.data;
         }
+        if (res.status === 401) {
+          dispatch(userAuthenticate());
+        }
+        setTimeout(() => {
+          dispatch(resetError());
+        }, 1000);
         return rejectWithValue(res.data);
       }
     );

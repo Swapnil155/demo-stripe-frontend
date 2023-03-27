@@ -12,7 +12,11 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { getRegister, resetError, resetSuccess } from "../../Features/User";
+import {
+  getRegister,
+  resetError,
+  resetSuccess,
+} from "../../redux/Features/User";
 import { Link, useNavigate } from "react-router-dom";
 const registerSchema = Yup.object().shape({
   name: Yup.string()

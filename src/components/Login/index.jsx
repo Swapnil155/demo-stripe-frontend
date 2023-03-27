@@ -17,7 +17,7 @@ import {
   resetError,
   resetSuccess,
   userAuthenticate,
-} from "../../Features/User";
+} from "../../redux/Features/User";
 import { Link, useNavigate } from "react-router-dom";
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email().required("Email is required"),

@@ -23,7 +23,7 @@ import {
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import paymentServices from "../../services/paymentServices";
-import { userAuthenticate } from "../../Features/User";
+import { userAuthenticate } from "../../redux/Features/User";
 import { useNavigate } from "react-router-dom";
 
 const CARD_ELEMENT_OPTIONS = {

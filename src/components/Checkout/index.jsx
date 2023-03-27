@@ -3,7 +3,7 @@ import { Button, Card, Container, InputGroup } from "react-bootstrap";
 import CardHeader from "react-bootstrap/esm/CardHeader";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { decrement, increment } from "../../Features/User";
+import { decrement, increment } from "../../redux/Features/User";
 import TokenService from "../../services/tokenService";
 import CheckoutModel from "./CheckoutModel";
 

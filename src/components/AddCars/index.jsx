@@ -15,15 +15,19 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { AddCars, createMember, removeMember } from "../../Features/addCars";
+import {
+  AddCars,
+  createMember,
+  removeMember,
+} from "../../redux/Features/addCars";
 import { useNavigate } from "react-router-dom";
-import { resetError, resetSuccess } from "../../Features/addCars";
+import { resetError, resetSuccess } from "../../redux/Features/addCars";
 import TokenService from "../../services/tokenService";
 
 const AddCar = () => {
   const { list, count, serverSuccess, serverFailed, loader, VRNList } =
     useSelector((state) => state.cars);
-  const { value } = useSelector((state) => state.users);
+  const { value, isAuthenticated } = useSelector((state) => state.users);
   // console.log([...list].reverse());
   const [show, setShow] = useState(false);
   const [toastBg, setToastBg] = useState("");
@@ -48,27 +52,21 @@ const AddCar = () => {
   const user = TokenService.getUser();
   // console.log(!user.isAuthenticated);
   useEffect(() => {
-    if (!user.isAuthenticate) {
+    if (!isAuthenticated) {
       navigate("/login");
     }
     if (list && serverSuccess) {
       setShow(true);
       setToastBg(`bg-success`);
       setServerError(serverSuccess);
-      setTimeout(() => {
-        dispatch(resetSuccess());
-      }, 1000);
     }
     if (serverFailed != null) {
       console.log(serverFailed);
       setShow(true);
       setToastBg(`bg-danger`);
       setServerError(serverFailed.message);
-      setTimeout(() => {
-        dispatch(resetError());
-      }, 4000);
     }
-  }, [navigate, dispatch, serverFailed, serverSuccess, list, user]);
+  }, [navigate, dispatch, serverFailed, serverSuccess, list, user, isAuthenticated]);
 
   const {
     register,
