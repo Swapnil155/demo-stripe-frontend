@@ -23,6 +23,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { resetError, resetSuccess } from "../../redux/Features/addCars";
 import TokenService from "../../services/tokenService";
+import EditCard from "./EditCard";
 
 const AddCar = () => {
   const { list, count, serverSuccess, serverFailed, loader, VRNList } =
@@ -66,8 +67,18 @@ const AddCar = () => {
       setToastBg(`bg-danger`);
       setServerError(serverFailed.message);
     }
-  }, [navigate, dispatch, serverFailed, serverSuccess, list, user, isAuthenticated]);
+  }, [
+    navigate,
+    dispatch,
+    serverFailed,
+    serverSuccess,
+    list,
+    user,
+    isAuthenticated,
+  ]);
 
+  const [modalShow, setModalShow] = useState(false);
+  const [userData, setUserData] = useState();
   const {
     register,
     handleSubmit,
@@ -102,6 +113,13 @@ const AddCar = () => {
           </div>
         </Toast>
       </ToastContainer>
+
+      <EditCard
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        user={userData}
+      />
+
       <Container className="mt-5">
         <Card className="shadow border-0 p-4 mb-5">
           <Form className="row g-2" onSubmit={handleSubmit(onSubmit)}>
@@ -221,7 +239,12 @@ const AddCar = () => {
                     </td>
                     <td>
                       <Stack direction="horizontal" gap={2}>
-                        <Button variant="secondary">Edit</Button>
+                        <Button
+                          variant="secondary"
+                          onClick={() => (setModalShow(true), setUserData(car.member_Details))}
+                        >
+                          Edit
+                        </Button>
 
                         <Button
                           onClick={() =>
