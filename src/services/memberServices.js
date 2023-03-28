@@ -38,9 +38,29 @@ const removeMember = async (_id, registrationNumber) => {
     });
 };
 
+const editMember = async (_id, ownerName, age, gender) => {
+  console.log(_id, ownerName, age, gender);
+  return api
+    .patch(`/api/user/editMember/${_id}`, {
+      ownerName,
+      age,
+      gender,
+    })
+    .then((res) => {
+      // const dispatch = useDispatch()
+      console.log(res);
+      return res;
+    })
+    .catch((err) => {
+      console.log(err.response);
+      return err.response;
+    });
+};
+
 const MemberServices = {
   addMember,
   removeMember,
+  editMember,
 };
 
 export default MemberServices;

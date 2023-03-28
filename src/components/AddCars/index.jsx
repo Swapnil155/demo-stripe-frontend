@@ -15,13 +15,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  AddCars,
-  createMember,
-  removeMember,
-} from "../../redux/Features/addCars";
+import { differenceInYears } from "date-fns";
+import { createMember, removeMember } from "../../redux/Features/addCars";
 import { useNavigate } from "react-router-dom";
-import { resetError, resetSuccess } from "../../redux/Features/addCars";
 import TokenService from "../../services/tokenService";
 import EditCard from "./EditCard";
 
@@ -37,13 +33,22 @@ const AddCar = () => {
   const dispatch = useDispatch();
 
   const addSchema = yup
-    .object({
-      ownername: yup.string().required(),
-      DOB: yup.string().required(),
-      gender: yup.string().required(),
+    .object()
+    .shape({
+      ownername: yup
+        .string()
+        .required("Thise feild is required")
+        .min(4, "Ownername lenght should be at least 4 characters"),
+      DOB: yup
+        .string()
+        .required("Thise feild is required")
+        .test("dob", "Should be greater than 18", function (value) {
+          return differenceInYears(new Date(), new Date(value)) >= 18;
+        }),
+      gender: yup.string().required("Thise feild is required"),
       VRN: yup
         .string()
-        .required()
+        .required("Thise feild is required")
         .test("VRN-check", "These vehicle already added", function (value) {
           return !VRNList.includes(value);
         }),
@@ -132,6 +137,9 @@ const AddCar = () => {
                   {...register("ownername")}
                   required
                 />
+                <Form.Text className="text-danger">
+                  {errors.ownername?.message}
+                </Form.Text>
               </Form.Group>
             </Col>
 
@@ -139,6 +147,9 @@ const AddCar = () => {
               <Form.Group className="mb-3" controlId="Register.ControlInput1">
                 <Form.Label>Date of Birth</Form.Label>
                 <Form.Control type="date" {...register("DOB")} required />
+                <Form.Text className="text-danger">
+                  {errors.DOB?.message}
+                </Form.Text>
               </Form.Group>
             </Col>
 
@@ -150,11 +161,14 @@ const AddCar = () => {
                   {...register("gender")}
                   required
                 >
-                  <option>Choose...</option>
+                  <option value="">Choose...</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                   <option value="other">Other</option>
                 </Form.Select>
+                <Form.Text className="text-danger">
+                  {errors.gender?.message}
+                </Form.Text>
               </Form.Group>
             </Col>
 
@@ -241,7 +255,9 @@ const AddCar = () => {
                       <Stack direction="horizontal" gap={2}>
                         <Button
                           variant="secondary"
-                          onClick={() => (setModalShow(true), setUserData(car.member_Details))}
+                          onClick={() => (
+                            setModalShow(true), setUserData(car.member_Details)
+                          )}
                         >
                           Edit
                         </Button>

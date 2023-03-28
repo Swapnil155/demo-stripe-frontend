@@ -29,12 +29,16 @@ const registerSchema = Yup.object().shape({
   email: Yup.string().email().required("Email is required"),
   password: Yup.string()
     .required("Password is required")
-    .min(4, "Password length should be at least 4 characters")
-    .max(12, "Password cannot exceed more than 12 characters"),
+    .matches(/[A-Z]/, "Password must contain atleast one uppercase")
+    .matches(/[a-z]/, "Password must contain atleast one lowercase")
+    .matches(/[@#&]/, "Password must contain special character @,#,&")
+    .min(8, "password must be at least 8 characters"),
   Cpassword: Yup.string()
     .required("Confirm Password is required")
-    .min(4, "Password length should be at least 4 characters")
-    .max(12, "Password cannot exceed more than 12 characters")
+    .matches(/[A-Z]/, "Password must contain atleast one uppercase")
+    .matches(/[a-z]/, "Password must contain atleast one lowercase")
+    .matches(/[@#&]/, "Password must contain special character @,#,&")
+    .min(8, "password must be at least 8 characters")
     .oneOf([Yup.ref("password")], "Passwords do not match"),
 });
 const Register = () => {

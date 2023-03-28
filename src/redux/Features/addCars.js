@@ -12,7 +12,7 @@ export const createMember = createAsyncThunk(
     const memberData = await MemberServices.addMember(
       _id,
       ownername,
-      18,
+      DOB,
       gender,
       VRN
     ).then((res) => {
@@ -63,6 +63,36 @@ export const removeMember = createAsyncThunk(
   }
 );
 
+export const editMember = createAsyncThunk(
+  "member/editMember",
+  async ({ DOB, gender, ownername, _id }, { rejectWithValue, dispatch }) => {
+    const memberData = await MemberServices.editMember(
+      _id,
+      ownername,
+      DOB,
+      gender
+    ).then((res) => {
+      console.log(res);
+      if (res.status === 200) {
+        setTimeout(() => {
+          dispatch(resetSuccess());
+        }, 1000);
+        return res.data;
+      }
+      if (res.status === 401) {
+        dispatch(userAuthenticate());
+      }
+      setTimeout(() => {
+        dispatch(resetError());
+      }, 1000);
+      return rejectWithValue(res.data);
+    });
+    return memberData;
+    // console.log(DOB, gender, ownername, _id);
+    // return
+  }
+);
+
 export const addCarsSlice = createSlice({
   name: "Cars",
   initialState: {
@@ -75,13 +105,9 @@ export const addCarsSlice = createSlice({
   },
   reducers: {
     AddCars: (state, action) => {
-      console.log(action.payload);
-      const car = {
-        id: Math.random() * 100,
-        car: action.payload,
-      };
-      state.list.push(car);
-      state.count += 1;
+      console.log(action.payload.length);
+      state.list = action.payload;
+      state.count = action.payload.length;
     },
     resetError: (state, action) => {
       state.serverFailed = null;
@@ -141,6 +167,22 @@ export const addCarsSlice = createSlice({
       if (action.payload.data) {
         console.log(action.payload.data);
       }
+    },
+
+    // Edit
+    [editMember.pending]: (state, action) => {
+      state.loader = true;
+    },
+    [editMember.fulfilled]: (state, action) => {
+      // state.serverSuccess = action.payload.message;
+      state.loader = false;
+    },
+    [editMember.rejected]: (state, action) => {
+      state.loader = false;
+      state.serverFailed = action.payload.Error[0];
+      // if (action.payload.data) {
+      //   console.log(action.payload.data);
+      // }
     },
   },
 });

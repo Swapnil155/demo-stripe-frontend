@@ -110,7 +110,7 @@ const MakePayment = (props) => {
             const confirmPayment = await stripe
               .confirmCardPayment(client_secret)
               .then((response) => {
-                navigate("/addCars");
+                // navigate("/addCars");
                 return response;
               });
             console.log(confirmPayment);
@@ -124,6 +124,7 @@ const MakePayment = (props) => {
           console.log(err);
           setLoader(false);
         });
+        props.onHide()
     } catch (error) {
       console.log(error);
       setLoader(false);

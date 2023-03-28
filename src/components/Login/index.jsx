@@ -39,8 +39,6 @@ const Login = () => {
       setToastBg(`bg-success`);
       setServerError(serverSuccess);
       setTimeout(() => {
-        dispatch(resetSuccess());
-        // dispatch(userAuthenticate());
         navigate("/");
       }, 1000);
     }
@@ -49,9 +47,6 @@ const Login = () => {
       setShow(true);
       setToastBg(`bg-danger`);
       setServerError(serverFailed.message);
-      setTimeout(() => {
-        dispatch(resetError());
-      }, 4000);
     }
   }, [userData, navigate, dispatch, serverFailed, serverSuccess]);
 
